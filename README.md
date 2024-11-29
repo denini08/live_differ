@@ -46,6 +46,30 @@ uv pip install .
 
 ## Usage
 
+After installation, you can run Live Differ directly from the command line:
+
+```bash
+live-differ
+```
+
+This will start the Live Differ server on http://127.0.0.1:5000 by default.
+
+You can configure the following environment variables:
+- `FLASK_HOST`: Server host (default: 127.0.0.1)
+- `FLASK_PORT`: Server port (default: 5000)
+- `FLASK_DEBUG`: Enable debug mode (default: False)
+- `SECRET_KEY`: Flask secret key (default: dev-key-please-change-in-production)
+
+Example with custom configuration:
+```bash
+FLASK_HOST=0.0.0.0 FLASK_PORT=8000 live-differ
+```
+
+Once the server is running:
+1. Open your web browser and navigate to the server address
+2. Upload or select the files you want to compare
+3. The differences will be displayed in real-time and will update automatically when files change
+
 This is a client-side application that runs locally on your machine. To use it:
 
 Run the application with two files to compare:

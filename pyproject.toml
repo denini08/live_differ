@@ -21,5 +21,8 @@ dependencies = [
 [project.urls]
 "Homepage" = "https://github.com/manthanby/live_differ"
 
+[project.scripts]
+live-differ = "app:main"
+
 [tool.hatch.build.targets.wheel]
 packages = ["modules", "differ"]
