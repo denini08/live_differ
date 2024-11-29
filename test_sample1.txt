@@ -1,0 +1,48 @@
+The quick brown fox jumps over the lazy dog.
+Testing file number one is here now today.
+Some random words to check the differences here.
+This line will be completely different in file two.
+Adding more content to see the changes made.
+Line number six contains important test information here.
+Here is another line for testing purposes only.
+We need enough lines to properly test diffs.
+The weather is sunny and warm today outside.
+This line will be modified in the second file.
+Testing continues with more random text examples here.
+Final line in first test file for comparison.
+The quick brown fox jumps over the lazy dog.
+Testing file number one is here now today.
+Some random words to check the differences here.
+This line will be completely different in file two.
+Adding more content to see the changes made.
+Line number six contains important test information here.
+Here is another line for testing purposes only.
+We need enough lines to properly test diffs.
+The weather is sunny and warm today outside.
+This line will be modified in the second file.
+Testing continues with more random text examples here.
+Final line in first test file for comparison.
+The quick brown fox jumps over the lazy dog.
+Testing file number one is here now today.
+Some random words to check the differences here.
+This line will be completely different in file two.
+Adding more content to see the changes made.
+Line number six contains important test information here.
+Here is another line for testing purposes only.
+We need enough lines to properly test diffs.
+The weather is sunny and warm today outside.
+This line will be modified in the second file.
+Testing continues with more random text examples here.
+Final line in first test file for comparison.
+The quick brown fox jumps over the lazy dog.
+Testing file number one is here now today.
+Some random words to check the differences here.
+This line will be completely different in file two.
+Adding more content to see the changes made.
+Line number six contains important test information here.
+Here is another line for testing purposes only.
+We need enough lines to properly test diffs.
+The weather is sunny and warm today outside.
+This line will be modified in the second file.
+Testing continues with more random text examples here.
+Final line in first test file for comparison.

@@ -1,0 +1,48 @@
+The quick brown fox jumps over the lazy dog.
+Testing file number two is here now today.
+Some different words to check the changes here.
+Completely new line replacing the old content here.
+Adding extra content to view the differences made.
+Line number six remains exactly the same here.
+Here is another line that has been modified.
+We need enough lines for proper diff testing.
+The weather is cloudy and cold today outside.
+Making changes to this line in second file.
+More testing with completely new content added here.
+Final line modified in second test file here.
+The quick brown fox jumps over the lazy dog.
+Testing file number two is here now today.
+Some different words to check the changes here.
+Completely new line replacing the old content here.
+Adding extra content to view the differences made.
+Line number six remains exactly the same here.
+Here is another line that has been modified.
+We need enough lines for proper diff testing.
+The weather is cloudy and cold today outside.
+Making changes to this line in second file.
+More testing with completely new content added here.
+Final line modified in second test file here.
+The quick brown fox jumps over the lazy dog.
+Testing file number two is here now today.
+Some different words to check the changes here.
+Completely new line replacing the old content here.
+Adding extra content to view the differences made.
+Line number six remains exactly the same here.
+Here is another line that has been modified.
+We need enough lines for proper diff testing.
+The weather is cloudy and cold today outside.
+Making changes to this line in second file.
+More testing with completely new content added here.
+Final line modified in second test file here.
+The quick brown fox jumps over the lazy dog.
+Testing file number two is here now today.
+Some different words to check the changes here.
+Completely new line replacing the old content here.
+Adding extra content to view the differences made.
+Line number six remains exactly the same here.
+Here is another line that has been modified.
+We need enough lines for proper diff testing.
+The weather is cloudy and cold today outside.
+Making changes to this line in second file.
+More testing with completely new content added here.
+Final line modified in second test file here.
