@@ -2,6 +2,8 @@
 
 A real-time file difference viewer that automatically updates when files change.
 
+![Live Differ Screenshot](assets/images/screenshot.png)
+
 ## Features
 
 - Real-time file difference visualization
