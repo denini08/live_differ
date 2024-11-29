@@ -58,7 +58,6 @@ You can configure the following environment variables:
 - `FLASK_HOST`: Server host (default: 127.0.0.1)
 - `FLASK_PORT`: Server port (default: 5000)
 - `FLASK_DEBUG`: Enable debug mode (default: False)
-- `SECRET_KEY`: Flask secret key (default: dev-key-please-change-in-production)
 
 Example with custom configuration:
 ```bash
