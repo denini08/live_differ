@@ -14,15 +14,34 @@ A real-time file difference viewer that automatically updates when files change.
 
 ## Installation
 
+You can install Live Differ using pip:
+
+```bash
+pip install git+https://github.com/manthanby/live_differ.git
+```
+
+Or using uv:
+
+```bash
+uv pip install git+https://github.com/manthanby/live_differ.git
+```
+
+Alternatively, you can install from source:
+
 1. Clone the repository:
 ```bash
 git clone <repository-url>
 cd live_differ
 ```
 
-2. Install dependencies:
+2. Install using pip:
 ```bash
-pip install -r requirements.txt
+pip install .
+```
+
+Or using uv:
+```bash
+uv pip install .
 ```
 
 ## Usage
