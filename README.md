@@ -14,60 +14,18 @@ A real-time file difference viewer that automatically updates when files change.
 
 ## Installation
 
-You can install Live Differ using pip:
-
-```bash
-pip install git+https://github.com/manthanby/live_differ.git
-```
-
-Or using uv:
-
-```bash
-uv pip install git+https://github.com/manthanby/live_differ.git
-```
-
-Alternatively, you can install from source:
-
 1. Clone the repository:
 ```bash
 git clone <repository-url>
 cd live_differ
 ```
 
-2. Install using pip:
+2. Install dependencies:
 ```bash
-pip install .
-```
-
-Or using uv:
-```bash
-uv pip install .
+pip install -r requirements.txt
 ```
 
 ## Usage
-
-After installation, you can run Live Differ directly from the command line:
-
-```bash
-live-differ
-```
-
-This will start the Live Differ server on http://127.0.0.1:5000 by default.
-
-You can configure the following environment variables:
-- `FLASK_HOST`: Server host (default: 127.0.0.1)
-- `FLASK_PORT`: Server port (default: 5000)
-- `FLASK_DEBUG`: Enable debug mode (default: False)
-
-Example with custom configuration:
-```bash
-FLASK_HOST=0.0.0.0 FLASK_PORT=8000 live-differ
-```
-
-Once the server is running:
-1. Open your web browser and navigate to the server address
-2. Upload or select the files you want to compare
-3. The differences will be displayed in real-time and will update automatically when files change
 
 This is a client-side application that runs locally on your machine. To use it:
 
