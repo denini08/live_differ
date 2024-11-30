@@ -99,7 +99,7 @@ def main(
     typer.secho(f"\nVersion bumped from v{current_version} to v{new_version}", fg="green")
     typer.secho("\nRun these commands to complete the release:", fg="blue")
     for cmd in commands:
-        typer.secho(f"$ {cmd}", fg="yellow")
+        typer.secho(f"{cmd}", fg="yellow")
 
 if __name__ == "__main__":
     typer.run(main)
