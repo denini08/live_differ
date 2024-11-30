@@ -78,7 +78,7 @@ class FileDiffer:
             file2_lines = self.read_file(self.file2_path)
             
             self.logger.debug("Creating diff table...")
-            differ = difflib.HtmlDiff(tabsize=2, wrapcolumn=60)
+            differ = difflib.HtmlDiff(tabsize=2, wrapcolumn=120)
             diff_table = differ.make_file(
                 file1_lines, 
                 file2_lines,
