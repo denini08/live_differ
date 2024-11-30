@@ -10,6 +10,14 @@ Thank you for your interest in contributing to Live Differ! This document provid
 - [Testing Guidelines](#testing-guidelines)
 - [Documentation Guidelines](#documentation-guidelines)
 - [Building and Publishing](#building-and-publishing)
+  - [Prerequisites for Publishing](#prerequisites-for-publishing)
+  - [Building the Package](#building-the-package)
+  - [Publishing to TestPyPI](#publishing-to-testpypi)
+  - [Publishing to Production PyPI](#publishing-to-production-pypi)
+  - [Version Management](#version-management)
+  - [Version Numbering Guidelines](#version-numbering-guidelines)
+  - [Troubleshooting Publishing](#troubleshooting-publishing)
+  - [Security Notes](#security-notes)
 - [Error Handling](#error-handling)
 - [Logging Guidelines](#logging-guidelines)
 - [Pull Request Process](#pull-request-process)
@@ -291,6 +299,36 @@ Once you've verified everything works on TestPyPI:
    git tag v0.1.0  # Replace with your version
    git push origin v0.1.0
    ```
+
+### Version Numbering Guidelines
+1. **Production Versions**
+   - Follow semantic versioning (MAJOR.MINOR.PATCH)
+     - MAJOR: Breaking changes
+     - MINOR: New features (backward compatible)
+     - PATCH: Bug fixes (backward compatible)
+   - Example: `1.2.3`
+
+2. **Development Versions**
+   - For testing on TestPyPI, use development versions:
+     - Development suffix: `0.1.0.dev1`, `0.1.0.dev2`
+     - Local version identifiers: `0.1.0+dev1`, `0.1.0+dev2`
+   - Reset development numbers when releasing a new version
+
+3. **Version Immutability**
+   - PyPI and TestPyPI do not allow overwriting existing versions
+   - Once uploaded, a version number cannot be reused
+   - This is a security feature to protect against supply chain attacks
+   - For TestPyPI only:
+     - You can delete the entire project through the web interface
+     - Must wait 24 hours before reusing deleted version numbers
+     - Not recommended for production PyPI
+
+4. **Best Practices**
+   - Never delete versions from production PyPI
+   - Always increment version numbers for new uploads
+   - Use development versions for testing
+   - Keep a changelog of version changes
+   - Tag releases in git to match PyPI versions
 
 ### Troubleshooting Publishing
 - If you get a version conflict error, ensure you've updated the version in `pyproject.toml`
