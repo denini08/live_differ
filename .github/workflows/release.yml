@@ -26,20 +26,15 @@ jobs:
       - name: Build package
         run: python -m build
 
-      - name: Generate Changelog
+      - name: Generate Changelog and Create Release
         id: changelog
-        uses: metcalfc/changelog-generator@v4.2.0
+        uses: ncipollo/release-action@v1
         with:
-          myToken: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v1
-        with:
-          body: ${{ steps.changelog.outputs.changelog }}
-          files: |
-            dist/*
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          generateReleaseNotes: true
+          artifacts: "dist/*"
+          draft: false
+          prerelease: false
 
       - name: Publish to PyPI
         env:
