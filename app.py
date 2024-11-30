@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
 import os
-import sys
 import logging
 from logging.handlers import RotatingFileHandler
-from flask import Flask, render_template, jsonify
+from flask import Flask, render_template
 from flask_socketio import SocketIO
-from watchdog.observers import Observer
 from modules.differ import FileDiffer
-from modules.watcher import FileChangeHandler
 
 # Configure logging
 def setup_logging():
@@ -32,7 +29,6 @@ def setup_logging():
 
 # App configuration
 class Config:
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'dev-key-please-change-in-production'
     DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 't')
     HOST = os.environ.get('FLASK_HOST', '127.0.0.1')
     PORT = int(os.environ.get('FLASK_PORT', 5000))
@@ -67,37 +63,3 @@ def not_found_error(error):
 def internal_error(error):
     app.logger.error(f"Server Error: {error}")
     return render_template('error.html', error="Internal server error"), 500
-
-def main():
-    setup_logging()
-    app.logger.info("Starting Live Differ application")
-    
-    if not app.config.get('FILE1') or not app.config.get('FILE2'):
-        app.logger.error("File paths not configured")
-        print("Usage: export FILE1=<file1_path> FILE2=<file2_path> before running the application")
-        sys.exit(1)
-
-    try:
-        differ = FileDiffer(app.config.get('FILE1'), app.config.get('FILE2'))
-        
-        # Set up file watching
-        event_handler = FileChangeHandler(differ, socketio)
-        observer = Observer()
-        observer.schedule(event_handler, path=os.path.dirname(differ.file1_path), recursive=False)
-        observer.schedule(event_handler, path=os.path.dirname(differ.file2_path), recursive=False)
-        observer.start()
-
-        app.logger.info(f"Starting server on {Config.HOST}:{Config.PORT}")
-        socketio.run(app, 
-                    host=Config.HOST,
-                    port=Config.PORT,
-                    debug=Config.DEBUG)
-    except Exception as e:
-        app.logger.error(f"Application error: {str(e)}")
-        raise
-    finally:
-        observer.stop()
-        observer.join()
-
-if __name__ == '__main__':
-    main()
