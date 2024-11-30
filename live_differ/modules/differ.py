@@ -1,6 +1,7 @@
 import os
 import difflib
 import logging
+import re
 from datetime import datetime
 from typing import Dict, List, Union
 
@@ -88,6 +89,8 @@ class FileDiffer:
             if self.debug:
                 self.logger.debug("Creating diff table...")
             differ = difflib.HtmlDiff(tabsize=2, wrapcolumn=120)
+            
+            # Get the diff output first
             diff_table = differ.make_file(
                 file1_lines, 
                 file2_lines,
@@ -98,7 +101,41 @@ class FileDiffer:
             
             # Clean up the HTML output
             diff_table = diff_table.replace('&nbsp;', ' ')  # Replace &nbsp; with regular spaces
-            diff_table = diff_table.replace('<table class="diff"', '<table class="diff-table"')  # Add our custom class
+            diff_table = diff_table.replace('<table class="diff"', '<table class="diff-table"')
+            
+            # Remove navigation cells and links
+            diff_table = re.sub(r'<td class="diff_next".*?</td>', '', diff_table)
+            diff_table = re.sub(r'<a href="#difflib_chg_.*?</a>', '', diff_table)
+            
+            # Fix the table structure to align file names correctly
+            # First, extract the file names
+            file1_name = os.path.basename(self.file1_path)
+            file2_name = os.path.basename(self.file2_path)
+            
+            # Create a new table header with proper structure
+            new_header = f'''
+            <table class="diff-table" cellspacing="0" cellpadding="0">
+            <colgroup>
+                <col class="diff_header" width="4%" />
+                <col width="46%" />
+                <col class="diff_header" width="4%" />
+                <col width="46%" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th colspan="2" class="diff_header">{file1_name}</th>
+                    <th colspan="2" class="diff_header">{file2_name}</th>
+                </tr>
+            </thead>
+            '''
+            
+            # Replace the original table header with our new one
+            diff_table = re.sub(
+                r'<table class="diff-table".*?<tr>.*?</tr>',
+                new_header,
+                diff_table,
+                flags=re.DOTALL
+            )
             
             if self.debug:
                 self.logger.debug("Diff generation complete")

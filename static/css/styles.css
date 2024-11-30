@@ -253,68 +253,73 @@ body {
     max-width: 98vw;
 }
 
-/* Diff styles */
-.diff-content table {
+/* Diff table styles */
+.diff-table {
     width: 100%;
-    min-width: 100%;
-    table-layout: fixed;
     border-collapse: collapse;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    table-layout: fixed;
 }
 
-.diff-content td {
-    padding: 0.25rem 1rem;
+.diff-table td, .diff-table th {
+    padding: 0.25rem 0.5rem;
     white-space: pre;
-    overflow-x: auto;
+    vertical-align: top;
 }
 
-.diff_header {
-    color: var(--text-muted);
-    background-color: var(--card-bg);
-}
-
-.diff_next {
-    color: var(--text-secondary);
-    background-color: var(--card-bg);
-}
-
-.diff_add {
-    background-color: rgba(34, 197, 94, 0.1);
-    color: var(--success);
-    position: relative;
-}
-
-.diff_chg {
-    background-color: rgba(234, 179, 8, 0.1);
-    color: var(--warning);
-    position: relative;
-}
-
-.diff_sub {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
-    position: relative;
-}
-
-.theme-switch {
-    position: relative;
-    cursor: pointer;
+.diff-table thead th {
+    text-align: left;
     padding: 0.5rem;
-    border-radius: 0.375rem;
-    margin-left: 0.5rem;
-    transition: background-color 0.2s;
+    color: var(--text-primary);
+    background-color: var(--card-bg);
+    border-bottom: 1px solid var(--card-border);
 }
 
-.theme-switch:hover {
-    background-color: var(--card-border);
+.diff-table thead th:first-child {
+    border-right: 1px solid var(--card-border);
 }
 
-.theme-switch i {
-    font-size: 1rem;
-    color: var(--primary);
+.diff-table td.diff_header {
+    width: 4%;
+    text-align: right;
+    color: var(--text-muted);
+    user-select: none;
+    background-color: var(--card-bg);
+    border-right: 1px solid var(--card-border);
+}
+
+.diff-table td:not(.diff_header) {
+    width: 46%;
+}
+
+tr.diff_add {
+    background-color: rgba(34, 197, 94, 0.1);
+}
+
+tr.diff_add td:not(.diff_header) {
+    background-color: rgba(34, 197, 94, 0.2);
+}
+
+tr.diff_chg {
+    background-color: rgba(234, 179, 8, 0.1);
+}
+
+tr.diff_chg td:not(.diff_header) {
+    background-color: rgba(234, 179, 8, 0.2);
+}
+
+tr.diff_sub {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+tr.diff_sub td:not(.diff_header) {
+    background-color: rgba(239, 68, 68, 0.2);
 }
 
 .legends-card {
-    flex: 0.5;
+    flex: 1;
     min-width: 0;
     background: var(--card-bg);
     border: 1px solid var(--card-border);
@@ -334,7 +339,7 @@ body {
 .legends-list {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: 0.5rem;
 }
 
 .legend-item {
@@ -351,62 +356,15 @@ body {
 }
 
 .legend-item.added .legend-color {
-    background-color: rgba(34, 197, 94, 0.1);
-    border: 1px solid var(--success);
+    background-color: var(--success);
 }
 
 .legend-item.removed .legend-color {
-    background-color: rgba(239, 68, 68, 0.1);
-    border: 1px solid var(--danger);
+    background-color: var(--danger);
 }
 
 .legend-item.modified .legend-color {
-    background-color: rgba(234, 179, 8, 0.1);
-    border: 1px solid var(--warning);
-}
-
-.shortcuts-card {
-    flex: 0.5;
-    min-width: 0;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    border-radius: 8px;
-    padding: 0.25rem;
-    backdrop-filter: blur(12px);
-}
-
-.shortcuts-card h3 {
-    color: var(--primary);
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
-    padding-bottom: 0.25rem;
-    border-bottom: 1px solid var(--card-border);
-}
-
-.shortcuts-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-}
-
-.shortcut-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-size: 0.8rem;
-    color: var(--text-primary);
-}
-
-.shortcut-item kbd {
-    background: var(--card-border);
-    border: 1px solid var(--text-muted);
-    border-radius: 4px;
-    padding: 0.1rem 0.4rem;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.75rem;
-    color: var(--primary);
-    min-width: 1.2rem;
-    text-align: center;
+    background-color: var(--warning);
 }
 
 @keyframes fadeIn {
