@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "live-differ"
-version = "1.0.2"
+version = "1.0.3"
 description = "A real-time file difference viewer with live updates"
 readme = "README.md"
 requires-python = ">=3.7"
