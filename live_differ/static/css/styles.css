@@ -67,7 +67,7 @@ body {
 }
 
 .container {
-    max-width: 1400px;
+    max-width: 98vw;
     width: 100%;
     margin: 0 auto;
     animation: fadeIn 0.5s ease-out;
@@ -155,10 +155,99 @@ body {
     border: 1px solid var(--card-border);
     backdrop-filter: blur(12px);
     padding: 0.6rem;
+    margin: 0.5rem;
 }
 
-.diff-container:hover {
-    box-shadow: var(--card-shadow-hover);
+.diff-content {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    line-height: 1.4;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.diff-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: 'JetBrains Mono', monospace;
+}
+
+/* Headers */
+.diff-table th {
+    background-color: var(--card-bg);
+    color: var(--text-primary);
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid var(--card-border);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
+
+/* Line numbers */
+.diff-table td.diff_header {
+    width: 40px !important;
+    text-align: right;
+    padding: 0 8px;
+    color: var(--text-muted);
+    background-color: var(--card-bg);
+    border-right: 1px solid var(--card-border);
+    user-select: none;
+}
+
+/* Code cells */
+.diff-table td {
+    padding: 0 8px;
+    white-space: pre;
+    font-family: 'JetBrains Mono', monospace;
+    width: auto;
+}
+
+/* Colors for different types of changes */
+.diff_add {
+    background-color: rgba(34, 197, 94, 0.1);
+}
+
+.diff_sub {
+    background-color: rgba(239, 68, 68, 0.1);
+}
+
+.diff_chg {
+    background-color: rgba(234, 179, 8, 0.1);
+}
+
+/* Specific change highlights */
+.diff_add span {
+    background-color: rgba(34, 197, 94, 0.2);
+}
+
+.diff_sub span {
+    background-color: rgba(239, 68, 68, 0.2);
+}
+
+.diff_chg span {
+    background-color: rgba(234, 179, 8, 0.2);
+}
+
+/* Scrollbars */
+.diff-content::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.diff-content::-webkit-scrollbar-track {
+    background: var(--card-bg);
+    border-radius: 4px;
+}
+
+.diff-content::-webkit-scrollbar-thumb {
+    background: var(--text-muted);
+    border-radius: 4px;
+}
+
+.diff-content::-webkit-scrollbar-thumb:hover {
+    background: var(--text-secondary);
 }
 
 .file-info {
@@ -237,64 +326,6 @@ body {
     font-size: 0.8rem;
     color: var(--text-secondary);
     margin: 0;
-}
-
-.diff-content {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.8rem;
-    line-height: 1.5;
-    overflow-x: auto;
-    border-radius: 6px;
-    background: var(--card-bg);
-    border: 1px solid var(--card-border);
-    padding: 0.3rem;
-}
-
-/* Diff styles */
-.diff-content table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.diff-content td {
-    padding: 0.25rem 1rem;
-    white-space: pre;
-}
-
-.diff-content td:first-child {
-    padding-left: 1.5rem;
-}
-
-.diff-content td:last-child {
-    padding-right: 1.5rem;
-}
-
-.diff_header {
-    color: var(--text-muted);
-    background-color: var(--card-bg);
-}
-
-.diff_next {
-    color: var(--text-secondary);
-    background-color: var(--card-bg);
-}
-
-.diff_add {
-    background-color: rgba(34, 197, 94, 0.1);
-    color: var(--success);
-    position: relative;
-}
-
-.diff_chg {
-    background-color: rgba(234, 179, 8, 0.1);
-    color: var(--warning);
-    position: relative;
-}
-
-.diff_sub {
-    background-color: rgba(239, 68, 68, 0.1);
-    color: var(--danger);
-    position: relative;
 }
 
 .theme-switch {

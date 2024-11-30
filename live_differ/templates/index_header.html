@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Differ - Real-time File Comparison</title>
+    <meta name="description" content="Live Differ - A modern tool for real-time file comparison and diffing">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="theme-switch" id="theme-switch">
+                <i class="ri-lightbulb-line" id="theme-icon"></i>
+            </div>
+            <h1 class="logo">
+                <i class="ri-git-branch-line"></i>
+                Live Differ
+            </h1>
+            <div class="connection-status">
+                <span class="status-indicator disconnected" id="status-indicator"></span>
+                <span class="status-text" id="status-text">Disconnected</span>
+            </div>
+        </header>
+
+        <div class="file-info">
+            <div class="file-card" id="file1-card">
+                <h3><i class="ri-file-text-line"></i> File 1</h3>
+                <div class="file-details">
+                    <p>
+                        <strong>Name</strong>
+                        <span id="file1-name">{{ diff_data.file1_info.name }}</span>
+                    </p>
+                    <p>
+                        <strong>Path</strong>
+                        <span id="file1-path" class="path-text">{{ diff_data.file1_info.path }}</span>
+                    </p>
+                    <p>
+                        <strong>Modified</strong>
+                        <span id="file1-modified">{{ diff_data.file1_info.modified_time }}</span>
+                    </p>
+                    <p>
+                        <strong>Size</strong>
+                        <span id="file1-size">{{ diff_data.file1_info.size }} bytes</span>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="file-card" id="file2-card">
+                <h3><i class="ri-file-text-line"></i> File 2</h3>
+                <div class="file-details">
+                    <p>
+                        <strong>Name</strong>
+                        <span id="file2-name">{{ diff_data.file2_info.name }}</span>
+                    </p>
+                    <p>
+                        <strong>Path</strong>
+                        <span id="file2-path" class="path-text">{{ diff_data.file2_info.path }}</span>
+                    </p>
+                    <p>
+                        <strong>Modified</strong>
+                        <span id="file2-modified">{{ diff_data.file2_info.modified_time }}</span>
+                    </p>
+                    <p>
+                        <strong>Size</strong>
+                        <span id="file2-size">{{ diff_data.file2_info.size }} bytes</span>
+                    </p>
+                </div>
+            </div>
+
+            <div class="legends-card">
+                <h3><i class="ri-information-line"></i> Legends</h3>
+                <div class="legends-list">
+                    <div class="legend-item added">
+                        <span class="legend-color"></span>
+                        <span>Added</span>
+                    </div>
+                    <div class="legend-item removed">
+                        <span class="legend-color"></span>
+                        <span>Removed</span>
+                    </div>
+                    <div class="legend-item modified">
+                        <span class="legend-color"></span>
+                        <span>Changed</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="shortcuts-card">
+                <h3><i class="ri-keyboard-line"></i> Navigation</h3>
+                <div class="shortcuts-list">
+                    <div class="shortcut-item">
+                        <kbd>f</kbd>
+                        <span>First change</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>n</kbd>
+                        <span>Next change</span>
+                    </div>
+                    <div class="shortcut-item">
+                        <kbd>t</kbd>
+                        <span>Top</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="diff-container">
