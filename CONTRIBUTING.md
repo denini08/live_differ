@@ -4,6 +4,9 @@ Thank you for your interest in contributing to Live Differ! This document provid
 
 ## Table of Contents
 - [Development Setup](#development-setup)
+  - [Prerequisites](#prerequisites)
+  - [Setting Up Development Environment](#setting-up-development-environment)
+  - [Running the Differ](#running-the-differ)
 - [Project Structure](#project-structure)
 - [Development Workflow](#development-workflow)
 - [Code Style Guidelines](#code-style-guidelines)
@@ -57,6 +60,45 @@ source .venv/bin/activate  # On Unix/macOS
 pip install -e .
 pip install build twine pytest pytest-cov black isort flake8
 ```
+
+### Running the Differ
+
+There are several ways to run the Live Differ:
+
+1. **Using the CLI command** (after installation):
+   ```bash
+   live-differ file1.txt file2.txt
+   ```
+
+2. **Using Python module directly**:
+   ```bash
+   python -m live_differ file1.txt file2.txt
+   ```
+
+3. **Using Python code**:
+   ```python
+   from live_differ.cli import cli
+   from live_differ.modules.differ import FileDiffer
+   
+   # Option 1: Using the CLI programmatically
+   cli(["file1.txt", "file2.txt"])
+   
+   # Option 2: Using the Differ class directly
+   differ = FileDiffer("file1.txt", "file2.txt")
+   diff_data = differ.get_diff()
+   ```
+
+4. **Additional Options**:
+   ```bash
+   # Custom host and port
+   live-differ file1.txt file2.txt --host 0.0.0.0 --port 8000
+   
+   # Debug mode
+   live-differ file1.txt file2.txt --debug
+   
+   # Using environment variables
+   FLASK_HOST=0.0.0.0 FLASK_PORT=8000 live-differ file1.txt file2.txt
+   ```
 
 ## Project Structure
 
