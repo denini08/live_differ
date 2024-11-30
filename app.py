@@ -37,6 +37,8 @@ class Config:
     HOST = os.environ.get('FLASK_HOST', '127.0.0.1')
     PORT = int(os.environ.get('FLASK_PORT', 5000))
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
+    FILE1 = os.environ.get('FILE1')
+    FILE2 = os.environ.get('FILE2')
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -45,10 +47,12 @@ socketio = SocketIO(app)
 @app.route('/')
 def index():
     try:
-        if len(sys.argv) != 3:
-            return render_template('error.html', error="Please provide two files to compare"), 400
+        file1 = app.config.get('FILE1')
+        file2 = app.config.get('FILE2')
+        if not file1 or not file2:
+            return render_template('error.html', error="File paths not configured"), 400
             
-        differ = FileDiffer(sys.argv[1], sys.argv[2])
+        differ = FileDiffer(file1, file2)
         diff_data = differ.get_diff()
         return render_template('index.html', diff_data=diff_data)
     except Exception as e:
@@ -68,13 +72,13 @@ def main():
     setup_logging()
     app.logger.info("Starting Live Differ application")
     
-    if len(sys.argv) != 3:
-        app.logger.error("Invalid number of arguments")
-        print("Usage: python app.py file1_path file2_path")
+    if not app.config.get('FILE1') or not app.config.get('FILE2'):
+        app.logger.error("File paths not configured")
+        print("Usage: export FILE1=<file1_path> FILE2=<file2_path> before running the application")
         sys.exit(1)
 
     try:
-        differ = FileDiffer(sys.argv[1], sys.argv[2])
+        differ = FileDiffer(app.config.get('FILE1'), app.config.get('FILE2'))
         
         # Set up file watching
         event_handler = FileChangeHandler(differ, socketio)
