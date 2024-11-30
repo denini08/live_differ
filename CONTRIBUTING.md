@@ -231,30 +231,76 @@ pytest --cov=live_differ --cov-report=html
 
 ## Building and Publishing
 
+### Prerequisites for Publishing
+- Create accounts on [PyPI](https://pypi.org) and [TestPyPI](https://test.pypi.org)
+- Install required tools:
+  ```bash
+  pip install build twine
+  ```
+
 ### Building the Package
-```bash
-# Clean previous builds
-rm -rf build/ dist/ *.egg-info/
+1. Clean previous builds:
+   ```bash
+   rm -rf dist/ build/ *.egg-info/
+   ```
 
-# Build package
-python -m build
+2. Build the package:
+   ```bash
+   python -m build
+   ```
+   This will create both wheel (.whl) and source (.tar.gz) distributions in the `dist` directory.
 
-# Check distribution
-twine check dist/*
-```
+### Publishing to TestPyPI
+1. First, ensure your package works on TestPyPI:
+   ```bash
+   python -m twine upload --repository testpypi dist/*
+   ```
 
-### Testing the Build
-```bash
-# Create a new virtual environment
-python -m venv test_env
-source test_env/bin/activate
+2. Test the installation from TestPyPI:
+   ```bash
+   pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ live-differ
+   ```
 
-# Install the built package
-pip install dist/*.whl
+3. Verify the package works correctly:
+   ```bash
+   live-differ --help
+   ```
 
-# Test the installation
-live-differ --help
-```
+### Publishing to Production PyPI
+Once you've verified everything works on TestPyPI:
+
+1. Upload to PyPI:
+   ```bash
+   python -m twine upload dist/*
+   ```
+
+2. Test the installation from PyPI:
+   ```bash
+   pip install live-differ
+   ```
+
+3. Verify the package works correctly:
+   ```bash
+   live-differ --help
+   ```
+
+### Version Management
+1. Update version in `pyproject.toml`
+2. Create a git tag:
+   ```bash
+   git tag v0.1.0  # Replace with your version
+   git push origin v0.1.0
+   ```
+
+### Troubleshooting Publishing
+- If you get a version conflict error, ensure you've updated the version in `pyproject.toml`
+- If you get a file exists error on PyPI, you cannot reupload the same version. You must increment the version number
+- For authentication issues, use an API token from your PyPI account settings instead of password
+
+### Security Notes
+- Never commit PyPI credentials to the repository
+- Use API tokens instead of passwords
+- Store credentials in `~/.pypirc` or use environment variables
 
 ## Error Handling
 
