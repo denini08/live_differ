@@ -11,7 +11,6 @@ class DifferError(Exception):
 class FileDiffer:
     def __init__(self, file1_path: str, file2_path: str):
         self.logger = logging.getLogger(__name__)
-        self.logger.setLevel(logging.DEBUG)
         
         self.logger.debug(f"Initializing FileDiffer with files: {file1_path}, {file2_path}")
         

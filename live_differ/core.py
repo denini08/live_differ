@@ -29,18 +29,20 @@ def setup_logging(debug=False):
     # Set up console handler
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
-    console_handler.setLevel(logging.DEBUG)  # Always show debug in console
+    console_handler.setLevel(logging.DEBUG if debug else logging.WARNING)
     
     # Configure root logger
     logger = logging.getLogger()
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
-    logger.setLevel(logging.DEBUG)
+    logger.setLevel(logging.DEBUG if debug else logging.WARNING)
     
     # Configure Flask and Werkzeug loggers
-    logging.getLogger('werkzeug').setLevel(logging.DEBUG)
-    logging.getLogger('engineio').setLevel(logging.DEBUG)
-    logging.getLogger('socketio').setLevel(logging.DEBUG)
+    werkzeug_level = logging.DEBUG if debug else logging.ERROR
+    socketio_level = logging.DEBUG if debug else logging.ERROR
+    logging.getLogger('werkzeug').setLevel(werkzeug_level)
+    logging.getLogger('engineio').setLevel(socketio_level)
+    logging.getLogger('socketio').setLevel(socketio_level)
 
 # Get the package's root directory
 package_dir = os.path.dirname(os.path.abspath(__file__))

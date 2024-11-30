@@ -92,7 +92,7 @@ def run(
         envvar="FLASK_PORT"
     ),
     debug: bool = typer.Option(
-        True,  # Always enable debug for now
+        False,
         "--debug",
         help="Enable debug mode",
         envvar="FLASK_DEBUG"
