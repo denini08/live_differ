@@ -20,6 +20,5 @@ class FileChangeHandler(FileSystemEventHandler):
                 file2_path = os.path.abspath(self.differ.file2_path)
                 
                 if event_path in [file1_path, file2_path]:
-                    print(f"File changed: {event_path}")  # Debug log
                     diff_data = self.differ.get_diff()
                     self.socket.emit('update_diff', diff_data, namespace='/')

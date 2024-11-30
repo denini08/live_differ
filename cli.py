@@ -4,8 +4,10 @@ import sys
 import typer
 import logging
 from flask_socketio import SocketIO
+from watchdog.observers import Observer
 from app import app, setup_logging
 from modules.differ import FileDiffer
+from modules.watcher import FileChangeHandler
 
 # Configure Flask and Werkzeug loggers to be quiet
 logging.getLogger('werkzeug').disabled = True
@@ -98,15 +100,33 @@ def run(
     app.config['FILE1'] = os.path.abspath(file1)
     app.config['FILE2'] = os.path.abspath(file2)
     
-    # Create quiet version of SocketIO
-    quiet_socketio = QuietSocketIO(app)
-    
-    # Display startup message
-    start_message(host, port)
-    
-    # Run the application with minimal output
-    app.logger.disabled = True
-    quiet_socketio.run(app, host=host, port=port, debug=debug, log_output=False)
+    try:
+        # Initialize differ
+        differ = FileDiffer(app.config['FILE1'], app.config['FILE2'])
+        
+        # Create quiet version of SocketIO
+        quiet_socketio = QuietSocketIO(app)
+        
+        # Set up file watching
+        event_handler = FileChangeHandler(differ, quiet_socketio)
+        observer = Observer()
+        observer.schedule(event_handler, path=os.path.dirname(differ.file1_path), recursive=False)
+        observer.schedule(event_handler, path=os.path.dirname(differ.file2_path), recursive=False)
+        observer.start()
+        
+        # Display startup message
+        start_message(host, port)
+        
+        try:
+            # Run the application with minimal output
+            app.logger.disabled = True
+            quiet_socketio.run(app, host=host, port=port, debug=debug, log_output=False)
+        finally:
+            observer.stop()
+            observer.join()
+    except Exception as e:
+        typer.echo(f"Error: {str(e)}", err=True)
+        raise typer.Exit(1)
 
 if __name__ == "__main__":
     cli()
