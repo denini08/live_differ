@@ -5,7 +5,7 @@ import typer
 import logging
 from flask_socketio import SocketIO
 from watchdog.observers import Observer
-from .core import app, setup_logging
+from .core import app, setup_logging, init_app_with_debug
 from .modules.differ import FileDiffer
 from .modules.watcher import FileChangeHandler
 
@@ -29,7 +29,7 @@ def validate_files(file1: str, file2: str):
         raise typer.BadParameter(f"File not readable: {file2}")
     return True
 
-def start_message(host: str, port: int):
+def start_message(host: str, port: int, debug: bool = False):
     """Display the startup message with the URL."""
     import socket
     
@@ -46,15 +46,16 @@ def start_message(host: str, port: int):
     protocol = "http"
     url = f"{protocol}://localhost:{port}"
     
-    typer.echo(f"\nStarting Live Differ...")
-    typer.echo(f"Host: {host}")
-    typer.echo(f"Port: {port}")
-    typer.echo(f"Debug mode: enabled")
-    if port_available:
-        typer.echo(f"Server should be available at: {url}")
-    if host == "0.0.0.0":
-        typer.echo("Server is accessible from any network interface")
-    typer.echo("\nPress Ctrl+C to quit.")
+    if debug:
+        typer.echo(f"\nStarting Live Differ...")
+        typer.echo(f"Host: {host}")
+        typer.echo(f"Port: {port}")
+        typer.echo(f"Debug mode: enabled")
+        if port_available:
+            typer.echo(f"Server should be available at: {url}")
+        if host == "0.0.0.0":
+            typer.echo("Server is accessible from any network interface")
+    typer.echo(f"\nLive diff available at: {url}")
 
 class QuietSocketIO(SocketIO):
     def run(self, app, **kwargs):
@@ -103,22 +104,24 @@ def run(
     """
     import logging
     
-    # Set up basic logging immediately
-    logging.basicConfig(level=logging.DEBUG)
+    # Set up basic logging based on debug flag
+    logging.basicConfig(level=logging.DEBUG if debug else logging.INFO)
     logger = logging.getLogger(__name__)
     
     try:
-        logger.debug("Starting Live Differ application...")
-        logger.debug(f"Host: {host}")
-        logger.debug(f"Port: {port}")
-        logger.debug(f"Debug mode: {debug}")
+        if debug:
+            logger.debug("Starting Live Differ application...")
+            logger.debug(f"Host: {host}")
+            logger.debug(f"Port: {port}")
+            logger.debug(f"Debug mode: {debug}")
         
         # Convert to absolute paths
         file1_abs = os.path.abspath(file1)
         file2_abs = os.path.abspath(file2)
         
-        logger.debug(f"File 1: {file1_abs}")
-        logger.debug(f"File 2: {file2_abs}")
+        if debug:
+            logger.debug(f"File 1: {file1_abs}")
+            logger.debug(f"File 2: {file2_abs}")
         
         # Validate files exist
         if not os.path.exists(file1_abs):
@@ -129,18 +132,23 @@ def run(
         # Store file paths in app config
         app.config['FILE1'] = file1_abs
         app.config['FILE2'] = file2_abs
-        app.config['DEBUG'] = True
+        
+        # Initialize app with debug settings
+        init_app_with_debug(debug)
         
         # Initialize differ to validate files are readable
-        logger.debug("Initializing differ...")
-        differ = FileDiffer(app.config['FILE1'], app.config['FILE2'])
+        if debug:
+            logger.debug("Initializing differ...")
+        differ = FileDiffer(app.config['FILE1'], app.config['FILE2'], debug=debug)
         
         # Create quiet version of SocketIO
-        logger.debug("Setting up SocketIO...")
+        if debug:
+            logger.debug("Setting up SocketIO...")
         quiet_socketio = QuietSocketIO(app)
         
         # Set up file watching
-        logger.debug("Setting up file watchers...")
+        if debug:
+            logger.debug("Setting up file watchers...")
         event_handler = FileChangeHandler(differ, quiet_socketio)
         observer = Observer()
         observer.schedule(event_handler, path=os.path.dirname(differ.file1_path), recursive=False)
@@ -148,16 +156,17 @@ def run(
         observer.start()
         
         # Display startup message
-        start_message(host, port)
+        start_message(host, port, debug)
         
         try:
-            logger.debug("Starting Flask application...")
+            if debug:
+                logger.debug("Starting Flask application...")
             # Run the application
             quiet_socketio.run(
                 app,
                 host=host,
                 port=port,
-                debug=True,  # Always enable debug
+                debug=debug,  # Use debug flag from command line
                 use_reloader=False,  # Disable reloader
                 allow_unsafe_werkzeug=True
             )

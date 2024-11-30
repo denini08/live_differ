@@ -24,12 +24,12 @@ def setup_logging(debug=False):
         backupCount=10
     )
     file_handler.setFormatter(formatter)
-    file_handler.setLevel(logging.DEBUG)  # Always log debug to file
+    file_handler.setLevel(logging.DEBUG if debug else logging.WARNING)  # Only debug logs in file if debug mode
     
     # Set up console handler
     console_handler = logging.StreamHandler()
     console_handler.setFormatter(formatter)
-    console_handler.setLevel(logging.DEBUG if debug else logging.WARNING)
+    console_handler.setLevel(logging.DEBUG if debug else logging.ERROR)  # Only error logs in console if not debug
     
     # Configure root logger
     logger = logging.getLogger()
@@ -37,12 +37,12 @@ def setup_logging(debug=False):
     logger.addHandler(console_handler)
     logger.setLevel(logging.DEBUG if debug else logging.WARNING)
     
-    # Configure Flask and Werkzeug loggers
-    werkzeug_level = logging.DEBUG if debug else logging.ERROR
-    socketio_level = logging.DEBUG if debug else logging.ERROR
-    logging.getLogger('werkzeug').setLevel(werkzeug_level)
-    logging.getLogger('engineio').setLevel(socketio_level)
-    logging.getLogger('socketio').setLevel(socketio_level)
+    # Configure Flask and related loggers to be quiet unless in debug mode
+    log_level = logging.DEBUG if debug else logging.ERROR
+    logging.getLogger('werkzeug').setLevel(log_level)
+    logging.getLogger('engineio').setLevel(log_level)
+    logging.getLogger('socketio').setLevel(log_level)
+    logging.getLogger('watchdog').setLevel(log_level)  # Also control watchdog logging
 
 # Get the package's root directory
 package_dir = os.path.dirname(os.path.abspath(__file__))
@@ -58,8 +58,8 @@ app = Flask(__name__,
 
 # Basic app configuration
 app.config.update(
-    DEBUG=True,
-    TESTING=True,
+    DEBUG=False,  # Will be overridden by CLI flag
+    TESTING=False,  # Will be overridden by CLI flag
     TEMPLATES_AUTO_RELOAD=True,
     SEND_FILE_MAX_AGE_DEFAULT=0,
     SECRET_KEY=os.urandom(24),
@@ -68,61 +68,71 @@ app.config.update(
     MAX_CONTENT_LENGTH=16 * 1024 * 1024
 )
 
-# Log template and static directories
-app.logger.debug(f"Template directory: {template_dir}")
-app.logger.debug(f"Static directory: {static_dir}")
-app.logger.debug(f"Template directory exists: {os.path.exists(template_dir)}")
-app.logger.debug(f"Static directory exists: {os.path.exists(static_dir)}")
-
-if os.path.exists(template_dir):
-    app.logger.debug(f"Template files: {os.listdir(template_dir)}")
-if os.path.exists(static_dir):
-    app.logger.debug(f"Static files: {os.listdir(static_dir)}")
-
-# Security and CORS settings
-CORS(app, resources={r"/*": {"origins": "*"}})
-
-# Initialize SocketIO with debugging
+# Initialize SocketIO with debugging off by default
 socketio = SocketIO(
     app,
     cors_allowed_origins="*",
-    logger=True,
-    engineio_logger=True,
-    debug=True
+    logger=False,
+    engineio_logger=False
 )
+
+def init_app_with_debug(debug=False):
+    """Initialize app with debug settings"""
+    app.debug = debug
+    app.testing = debug
+    
+    # Update SocketIO logging
+    socketio.logger = debug
+    socketio.engineio_logger = debug
+    
+    # Only log template and static info in debug mode
+    if debug:
+        app.logger.debug(f"Template directory: {template_dir}")
+        app.logger.debug(f"Static directory: {static_dir}")
+        app.logger.debug(f"Template directory exists: {os.path.exists(template_dir)}")
+        app.logger.debug(f"Static directory exists: {os.path.exists(static_dir)}")
+        
+        if os.path.exists(template_dir):
+            app.logger.debug(f"Template files: {os.listdir(template_dir)}")
+        if os.path.exists(static_dir):
+            app.logger.debug(f"Static files: {os.listdir(static_dir)}")
 
 @app.before_request
 def log_request_info():
     """Log details about each request."""
-    app.logger.debug("=" * 50)
-    app.logger.debug("Incoming request:")
-    app.logger.debug(f"Method: {request.method}")
-    app.logger.debug(f"URL: {request.url}")
-    app.logger.debug(f"Headers: {dict(request.headers)}")
-    app.logger.debug("=" * 50)
+    if app.debug:
+        app.logger.debug("=" * 50)
+        app.logger.debug("Incoming request:")
+        app.logger.debug(f"Method: {request.method}")
+        app.logger.debug(f"URL: {request.url}")
+        app.logger.debug(f"Headers: {dict(request.headers)}")
+        app.logger.debug("=" * 50)
 
 @app.after_request
 def after_request(response):
     """Log response info."""
-    app.logger.debug("=" * 50)
-    app.logger.debug("Outgoing response:")
-    app.logger.debug(f"Status: {response.status}")
-    app.logger.debug(f"Headers: {dict(response.headers)}")
-    app.logger.debug("=" * 50)
+    if app.debug:
+        app.logger.debug("=" * 50)
+        app.logger.debug("Outgoing response:")
+        app.logger.debug(f"Status: {response.status}")
+        app.logger.debug(f"Headers: {dict(response.headers)}")
+        app.logger.debug("=" * 50)
     return response
 
 @app.route('/')
 def index():
     """Render the index page with file comparison."""
     try:
-        app.logger.debug("Index route accessed")
+        if app.debug:
+            app.logger.debug("Index route accessed")
         
         # Get file paths
         file1 = app.config.get('FILE1')
         file2 = app.config.get('FILE2')
         
-        app.logger.debug(f"File1: {file1}")
-        app.logger.debug(f"File2: {file2}")
+        if app.debug:
+            app.logger.debug(f"File1: {file1}")
+            app.logger.debug(f"File2: {file2}")
         
         if not file1 or not file2:
             error_msg = "File paths not configured"
@@ -131,16 +141,18 @@ def index():
         
         # Initialize differ and get diff
         try:
-            differ = FileDiffer(file1, file2)
+            differ = FileDiffer(file1, file2, debug=app.debug)
             diff_data = differ.get_diff()
-            app.logger.debug("Diff generated successfully")
-            app.logger.debug(f"File1 info: {diff_data['file1_info']}")
-            app.logger.debug(f"File2 info: {diff_data['file2_info']}")
-            app.logger.debug("Diff HTML length: %d", len(diff_data['diff_html']))
+            if app.debug:
+                app.logger.debug("Diff generated successfully")
+                app.logger.debug(f"File1 info: {diff_data['file1_info']}")
+                app.logger.debug(f"File2 info: {diff_data['file2_info']}")
+                app.logger.debug("Diff HTML length: %d", len(diff_data['diff_html']))
             
             # For large diffs, we'll stream the response
             if len(diff_data['diff_html']) > 1_000_000:  # If diff is larger than 1MB
-                app.logger.debug("Large diff detected, streaming response")
+                if app.debug:
+                    app.logger.debug("Large diff detected, streaming response")
                 def generate():
                     # Yield the template header
                     yield render_template('index_header.html', diff_data=diff_data)
@@ -158,9 +170,11 @@ def index():
                 return app.response_class(generate(), mimetype='text/html')
             
             # For smaller diffs, render normally
-            app.logger.debug("Rendering template...")
+            if app.debug:
+                app.logger.debug("Rendering template...")
             response = render_template('index.html', diff_data=diff_data)
-            app.logger.debug("Template rendered successfully")
+            if app.debug:
+                app.logger.debug("Template rendered successfully")
             return response
             
         except Exception as e:
@@ -186,5 +200,8 @@ def internal_error(error):
     app.logger.exception(f"500 error: {error}")
     return render_template('error.html', error="Internal server error"), 500
 
+# Security and CORS settings
+CORS(app, resources={r"/*": {"origins": "*"}})
+
 # Initialize logging
-setup_logging(debug=True)
+setup_logging(debug=False)  # Default to non-debug mode, will be overridden by CLI flag
