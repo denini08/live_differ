@@ -1,0 +1,8 @@
+This is a sample text file.
+It contains multiple lines
+of text that are mostly similar
+between the two files.
+Only small differences exist.
+This line has a typo heer.
+The rest is identical.
+End of file.

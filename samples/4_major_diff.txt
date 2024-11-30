@@ -1,0 +1,9 @@
+Introduction to JavaScript
+JavaScript is a versatile language.
+It powers the modern web.
+Common uses include:
+- Frontend development
+- Backend (Node.js)
+- Mobile apps
+- Desktop applications
+JavaScript is essential for web development.

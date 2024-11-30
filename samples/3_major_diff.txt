@@ -1,0 +1,9 @@
+Introduction to Programming
+Python is a popular programming language.
+It is known for its simplicity and readability.
+Many developers use Python for:
+- Web development
+- Data science
+- Machine learning
+- Automation
+Python has a large standard library.

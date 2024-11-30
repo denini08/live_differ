@@ -1,0 +1,8 @@
+Special Characters Test File
+§1. Unicode Symbols: ⭐☼☔♤♧
+§2. Math Symbols: ∑∏√∞=
+§3. Currency: USD€JPY£
+§4. Punctuation marks: ""''–©™
+Regular text line
+More normal content
+THE END
