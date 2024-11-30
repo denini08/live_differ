@@ -5,9 +5,9 @@ import typer
 import logging
 from flask_socketio import SocketIO
 from watchdog.observers import Observer
-from app import app, setup_logging
-from modules.differ import FileDiffer
-from modules.watcher import FileChangeHandler
+from .core import app, setup_logging
+from .modules.differ import FileDiffer
+from .modules.watcher import FileChangeHandler
 
 # Configure Flask and Werkzeug loggers to be quiet
 logging.getLogger('werkzeug').disabled = True

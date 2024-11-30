@@ -4,7 +4,7 @@ import logging
 from logging.handlers import RotatingFileHandler
 from flask import Flask, render_template
 from flask_socketio import SocketIO
-from modules.differ import FileDiffer
+from .modules.differ import FileDiffer
 
 # Configure logging
 def setup_logging():

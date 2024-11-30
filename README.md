@@ -17,6 +17,24 @@ A real-time file difference viewer that automatically updates when files change.
 
 ## Installation
 
+### Option 1: Install from PyPI (Recommended)
+```bash
+pip install live-differ
+```
+
+### Option 2: Install directly from Git
+```bash
+# Install from main branch
+pip install git+https://github.com/manthanby/live_differ.git
+
+# Install from a specific branch
+pip install git+https://github.com/manthanby/live_differ.git@branch-name
+
+# Install from a specific tag or release
+pip install git+https://github.com/manthanby/live_differ.git@v1.0.0
+```
+
+### Option 3: Install from Source
 1. Clone the repository:
 ```bash
 git clone <repository-url>
@@ -31,33 +49,33 @@ source .venv/bin/activate  # On Unix/macOS
 .venv\Scripts\activate     # On Windows
 ```
 
-3. Install dependencies:
+3. Install in development mode:
 ```bash
-pip install -r requirements.txt
+pip install -e .
 ```
 
 ## Usage
 
-Live Differ now features a modern command-line interface with various options and automatic help:
+Live Differ features a modern command-line interface with various options and automatic help:
 
 ### Basic Usage
 
 Compare two files with default settings:
 ```bash
-python cli.py file1.txt file2.txt
+live-differ file1.txt file2.txt
 ```
 
 ### Advanced Usage
 
 ```bash
 # Custom host and port
-python cli.py file1.txt file2.txt --host 0.0.0.0 --port 8000
+live-differ file1.txt file2.txt --host 0.0.0.0 --port 8000
 
 # Enable debug mode
-python cli.py file1.txt file2.txt --debug
+live-differ file1.txt file2.txt --debug
 
 # View all available options
-python cli.py --help
+live-differ --help
 ```
 
 ### Using Environment Variables
@@ -71,7 +89,7 @@ export FLASK_PORT=8000
 export FLASK_DEBUG=1
 
 # Run with environment configuration
-python cli.py file1.txt file2.txt
+live-differ file1.txt file2.txt
 ```
 
 After starting the server, open your browser and navigate to the displayed URL (default: `http://127.0.0.1:5000`).
@@ -102,31 +120,38 @@ Options:
 
 ```
 live_differ/
-├── app.py          # Main Flask application
-├── cli.py          # Command-line interface
-├── modules/        # Core functionality modules
-├── static/         # Static files (CSS, JS)
-├── templates/      # HTML templates
-├── logs/           # Application logs
-└── requirements.txt # Project dependencies
+├── live_differ/          # Main package directory
+│   ├── __init__.py      # Package initialization
+│   ├── __main__.py      # Entry point for running as module
+│   ├── cli.py           # Command-line interface
+│   ├── core.py          # Core application logic
+│   ├── modules/         # Core modules
+│   │   ├── __init__.py
+│   │   ├── differ.py    # File diffing logic
+│   │   └── watcher.py   # File change monitoring
+│   ├── static/          # Static web assets
+│   ├── templates/       # HTML templates
+│   └── assets/          # Project assets
+├── pyproject.toml       # Project configuration and metadata
+├── README.md           # Project documentation
+├── LICENSE            # License information
+└── requirements.txt   # Development dependencies
 ```
 
-### Logging
+### Development Setup
 
-Logs are written to `logs/app.log` with the following features:
-- Rotation enabled (10MB max size)
-- Keeps 10 backup files
-- Includes timestamps, log levels, and source information
-- Comprehensive error tracking
+1. Clone the repository
+2. Create and activate a virtual environment
+3. Install in development mode:
+```bash
+pip install -e .
+```
 
-### Error Handling
-
-The application includes robust error handling:
-- File validation (existence, permissions)
-- UTF-8 encoding validation
-- Input parameter validation
-- Detailed error pages with helpful messages
-- Comprehensive error logging
+4. Make your changes
+5. Test the changes:
+```bash
+live-differ test_sample1.txt test_sample2.txt
+```
 
 ## Security Considerations
 
