@@ -1,9 +1,14 @@
 #!/usr/bin/env python3
 import os
+import sys
 import typer
-from app import app, socketio, setup_logging
+import logging
+from flask_socketio import SocketIO
+from app import app, setup_logging
 from modules.differ import FileDiffer
 
+# Configure Flask and Werkzeug loggers to be quiet
+logging.getLogger('werkzeug').disabled = True
 cli = typer.Typer(
     name="live_differ",
     help="A real-time file difference viewer with live updates",
@@ -21,6 +26,25 @@ def validate_files(file1: str, file2: str):
     if not os.access(file2, os.R_OK):
         raise typer.BadParameter(f"File not readable: {file2}")
     return True
+
+def start_message(host: str, port: int):
+    """Display the startup message with the URL."""
+    protocol = "http"
+    if host == "0.0.0.0":
+        host = "localhost"
+    url = f"{protocol}://{host}:{port}"
+    typer.echo(f"\nLive Differ is running!")
+    typer.echo(f"View the diff at: {url}")
+    typer.echo("\nPress Ctrl+C to quit.")
+
+class QuietSocketIO(SocketIO):
+    def run(self, app, **kwargs):
+        # Suppress Flask's logging output
+        import flask.cli
+        flask.cli.show_server_banner = lambda *args, **kwargs: None
+        
+        # Call the original run method
+        super().run(app, **kwargs)
 
 @cli.command()
 def run(
@@ -69,13 +93,20 @@ def run(
     
     # Configure Flask app
     app.config['DEBUG'] = debug
-        
+    
     # Store file paths in app config for access in routes
     app.config['FILE1'] = os.path.abspath(file1)
     app.config['FILE2'] = os.path.abspath(file2)
     
-    # Run the application
-    socketio.run(app, host=host, port=port, debug=debug)
+    # Create quiet version of SocketIO
+    quiet_socketio = QuietSocketIO(app)
+    
+    # Display startup message
+    start_message(host, port)
+    
+    # Run the application with minimal output
+    app.logger.disabled = True
+    quiet_socketio.run(app, host=host, port=port, debug=debug, log_output=False)
 
 if __name__ == "__main__":
     cli()
