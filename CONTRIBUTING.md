@@ -9,6 +9,7 @@ Thank you for your interest in contributing to Live Differ! This document provid
   - [Running the Differ](#running-the-differ)
 - [Project Structure](#project-structure)
 - [Development Workflow](#development-workflow)
+- [Release Process](#release-process)
 - [Code Style Guidelines](#code-style-guidelines)
 - [Testing Guidelines](#testing-guidelines)
 - [Documentation Guidelines](#documentation-guidelines)
@@ -152,6 +153,67 @@ live_differ/
    - File system monitoring
    - Change detection
    - Event handling
+
+## Release Process
+
+### Overview
+Live Differ uses GitHub Actions for automated releases. When you push a tag starting with 'v', it automatically:
+1. Builds the Python package
+2. Generates a changelog
+3. Creates a GitHub release
+4. Publishes to PyPI
+
+### Prerequisites for Release
+1. Ensure all tests pass: `pytest tests/`
+2. Update documentation if needed
+3. Have PyPI credentials set up in GitHub repository secrets as `PYPI_API_TOKEN`
+
+### Making a Release
+1. Update version in `pyproject.toml`:
+   ```toml
+   [project]
+   version = "X.Y.Z"  # Update this version
+   ```
+
+2. Commit your changes:
+   ```bash
+   git add pyproject.toml
+   git commit -m "chore: bump version to vX.Y.Z"
+   ```
+
+3. Create and push a tag:
+   ```bash
+   git tag -a vX.Y.Z -m "Release vX.Y.Z"
+   git push origin vX.Y.Z
+   ```
+
+4. Monitor the release:
+   - Check GitHub Actions for the release workflow status
+   - Verify the release appears on GitHub Releases
+   - Confirm the package is available on PyPI
+
+### Version Numbering
+We follow Semantic Versioning (SemVer):
+- MAJOR version (X) for incompatible API changes
+- MINOR version (Y) for new functionality in a backward compatible manner
+- PATCH version (Z) for backward compatible bug fixes
+
+### Commit Convention
+Use conventional commits to get better changelogs:
+- `feat:` for new features
+- `fix:` for bug fixes
+- `docs:` for documentation changes
+- `test:` for test changes
+- `chore:` for maintenance tasks
+
+### Troubleshooting Releases
+- If the release workflow fails, check the GitHub Actions logs
+- For PyPI upload issues, verify your API token is correctly set
+- If you need to redo a release, delete the tag locally and remotely:
+  ```bash
+  git tag -d vX.Y.Z
+  git push --delete origin vX.Y.Z
+  ```
 
 ## Development Workflow
 
