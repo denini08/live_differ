@@ -41,4 +41,4 @@ def test_start_message_with_all_interfaces(capsys):
 async def test_cli_help():
     result = runner.invoke(cli, ["--help"])
     assert result.exit_code == 0
-    assert "A real-time file difference viewer" in result.output
+    assert "Run the Live Differ application to compare two files in real-time" in result.output

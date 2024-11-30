@@ -57,11 +57,15 @@ def test_compare_files(temp_files):
     diff = differ.get_diff()
     
     assert isinstance(diff, dict)
-    assert 'file1' in diff
-    assert 'file2' in diff
     assert 'diff_html' in diff
+    assert 'file1_info' in diff
+    assert 'file2_info' in diff
     
-    # Verify diff contains expected changes
+    # Verify file info
+    assert diff['file1_info']['name'] == 'file1.txt'
+    assert diff['file2_info']['name'] == 'file2.txt'
+    
+    # Verify diff contains expected changes in HTML format
     diff_html = diff['diff_html']
-    assert 'Line 2 modified' in diff_html
-    assert 'Line 4' in diff_html
+    assert '<span class="diff_add">Line&nbsp;2&nbsp;modified</span>' in diff_html
+    assert '<span class="diff_add">Line&nbsp;4</span>' in diff_html

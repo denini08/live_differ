@@ -29,15 +29,16 @@ def setup_logging():
 
 # App configuration
 class Config:
-    DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 't')
-    HOST = os.environ.get('FLASK_HOST', '127.0.0.1')
-    PORT = int(os.environ.get('FLASK_PORT', 5000))
-    MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
-    FILE1 = os.environ.get('FILE1')
-    FILE2 = os.environ.get('FILE2')
+    def __init__(self):
+        self.DEBUG = os.environ.get('FLASK_DEBUG', 'False').lower() in ('true', '1', 't')
+        self.HOST = os.environ.get('FLASK_HOST', '127.0.0.1')
+        self.PORT = int(os.environ.get('FLASK_PORT', '5000'))
+        self.MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max file size
+        self.FILE1 = os.environ.get('FILE1')
+        self.FILE2 = os.environ.get('FILE2')
 
 app = Flask(__name__)
-app.config.from_object(Config)
+app.config.from_object(Config())
 socketio = SocketIO(app)
 
 @app.route('/')
