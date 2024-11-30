@@ -165,29 +165,61 @@ Live Differ uses GitHub Actions for automated releases. When you push a tag star
 
 ### Prerequisites for Release
 1. Ensure all tests pass: `pytest tests/`
-2. Update documentation if needed
-3. Have PyPI credentials set up in GitHub repository secrets as `PYPI_API_TOKEN`
 
-### Making a Release
-1. Update version in `pyproject.toml`:
+### Using the Release Script
+
+The project includes a release script (`scripts/release.py`) to help automate the version bumping process. The script:
+- Checks if there are any pending git changes
+- Verifies if your branch is up to date with remote
+- Updates the version in pyproject.toml
+- Provides the necessary git commands to complete the release
+
+To use the release script:
+
+1. Ensure you're in the project root directory
+2. Run the script with one of the following commands:
+   ```bash
+   # For a patch version bump (0.0.X)
+   python scripts/release.py
+
+   # For a minor version bump (0.X.0)
+   python scripts/release.py --bump minor
+
+   # For a major version bump (X.0.0)
+   python scripts/release.py --bump major
+
+   # To see what would happen without making changes
+   python scripts/release.py --dry-run
+   ```
+
+3. If the script runs successfully, it will output a series of git commands. Execute these commands to complete the release process.
+
+Note: The script will fail if you have uncommitted changes or if your branch is not up to date with the remote repository.
+
+### Release Process
+
+The complete release process involves:
+1. Running the release script to bump version numbers
+2. Pushing the changes and tags to GitHub
+3. Update version in `pyproject.toml`:
    ```toml
    [project]
    version = "X.Y.Z"  # Update this version
    ```
 
-2. Commit your changes:
+4. Commit your changes:
    ```bash
    git add pyproject.toml
    git commit -m "chore: bump version to vX.Y.Z"
    ```
 
-3. Create and push a tag:
+5. Create and push a tag:
    ```bash
    git tag -a vX.Y.Z -m "Release vX.Y.Z"
    git push origin vX.Y.Z
    ```
 
-4. Monitor the release:
+6. Monitor the release:
    - Check GitHub Actions for the release workflow status
    - Verify the release appears on GitHub Releases
    - Confirm the package is available on PyPI
