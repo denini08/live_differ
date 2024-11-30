@@ -87,20 +87,20 @@ def run(
     The application will watch for changes in both files and update the diff view
     automatically when either file changes.
     """
-    # Validate files
-    validate_files(file1, file2)
-    
-    # Setup logging
-    setup_logging()
-    
-    # Configure Flask app
-    app.config['DEBUG'] = debug
-    
-    # Store file paths in app config for access in routes
-    app.config['FILE1'] = os.path.abspath(file1)
-    app.config['FILE2'] = os.path.abspath(file2)
-    
     try:
+        # Validate files
+        validate_files(file1, file2)
+        
+        # Setup logging
+        setup_logging()
+        
+        # Configure Flask app
+        app.config['DEBUG'] = debug
+        
+        # Store file paths in app config for access in routes
+        app.config['FILE1'] = os.path.abspath(file1)
+        app.config['FILE2'] = os.path.abspath(file2)
+        
         # Initialize differ
         differ = FileDiffer(app.config['FILE1'], app.config['FILE2'])
         
@@ -120,13 +120,14 @@ def run(
         try:
             # Run the application with minimal output
             app.logger.disabled = True
-            quiet_socketio.run(app, host=host, port=port, debug=debug, log_output=False)
+            quiet_socketio.run(app, host=host, port=port, debug=debug, allow_unsafe_werkzeug=True)
         finally:
             observer.stop()
             observer.join()
+            
     except Exception as e:
         typer.echo(f"Error: {str(e)}", err=True)
-        raise typer.Exit(1)
+        raise typer.Exit(code=1)
 
 if __name__ == "__main__":
     cli()
