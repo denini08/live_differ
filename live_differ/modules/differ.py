@@ -25,12 +25,18 @@ class FileDiffer:
         
         # Validate files exist and are readable
         for path in [self.file1_path, self.file2_path]:
-            if not os.path.exists(path):
+            try:
+                with open(path, 'r') as f:
+                    pass  # attempt to open the file to verify existence and readability
+            except FileNotFoundError:
                 self.logger.error(f"File not found: {path}")
                 raise DifferError(f"File not found: {path}")
-            if not os.access(path, os.R_OK):
+            except PermissionError:
                 self.logger.error(f"File not readable: {path}")
                 raise DifferError(f"File not readable: {path}")
+            except IOError as e:
+                self.logger.error(f"Error accessing file {path}: {str(e)}")
+                raise DifferError(f"Error accessing file {path}: {str(e)}")
         
         if self.debug:
             self.logger.debug("FileDiffer initialized successfully")

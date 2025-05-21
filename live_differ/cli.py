@@ -19,14 +19,16 @@ cli = typer.Typer(
 
 def validate_files(file1: str, file2: str):
     """Validate that both files exist and are readable."""
-    if not os.path.isfile(file1):
-        raise typer.BadParameter(f"File not found: {file1}")
-    if not os.path.isfile(file2):
-        raise typer.BadParameter(f"File not found: {file2}")
-    if not os.access(file1, os.R_OK):
-        raise typer.BadParameter(f"File not readable: {file1}")
-    if not os.access(file2, os.R_OK):
-        raise typer.BadParameter(f"File not readable: {file2}")
+    for file in (file1, file2):
+        try:
+            with open(file, 'r') as f:
+                pass  # Tenta abrir o arquivo para verificar se é legível
+        except FileNotFoundError:
+            raise typer.BadParameter(f"File not found: {file}")
+        except PermissionError:
+            raise typer.BadParameter(f"File not readable: {file}")
+        except IOError as e:
+            raise typer.BadParameter(f"Error accessing file {file}: {str(e)}")
     return True
 
 def start_message(host: str, port: int, debug: bool = False):

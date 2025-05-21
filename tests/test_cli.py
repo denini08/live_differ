@@ -7,26 +7,57 @@ import pytest
 import typer
 from datetime import datetime
 from typer.testing import CliRunner
-from unittest.mock import patch, Mock, MagicMock, ANY
+from unittest.mock import patch, Mock, MagicMock, mock_open, ANY
 from live_differ.cli import cli, validate_files, start_message, QuietSocketIO, run
 
-def test_validate_files():
-    with pytest.raises(typer.BadParameter, match="File not found"):
-        validate_files("nonexistent1.txt", "file2.txt")
+
+# fixture to set up and tear down test files
+@pytest.fixture
+def setup_files(tmp_path):
+    """Create temporary files for testing and clean them up afterward."""
+    file1 = tmp_path / "file1.txt"
+    file2 = tmp_path / "file2.txt"
     
-    with pytest.raises(typer.BadParameter, match="File not found"):
-        validate_files("file1.txt", "nonexistent2.txt")
+    file1.write_text("test content 1")
+    file2.write_text("test content 2")
     
-    with patch('os.path.isfile', return_value=True), \
-         patch('os.access', return_value=False):
-        with pytest.raises(typer.BadParameter, match="File not readable"):
-            validate_files("unreadable1.txt", "file2.txt")
-        with pytest.raises(typer.BadParameter, match="File not readable"):
-            validate_files("file1.txt", "unreadable2.txt")
+    yield str(file1), str(file2)
     
-    with patch('os.path.isfile', return_value=True), \
-         patch('os.access', return_value=True):
-        assert validate_files("file1.txt", "file2.txt") is True
+
+def test_validate_files(setup_files):
+    file1, file2 = setup_files  # get paths to temporary files
+
+    # First file does not exist
+    with pytest.raises(typer.BadParameter, match="File not found: nonexistent1.txt"):
+        validate_files("nonexistent1.txt", file2)
+
+    # Second file does not exist
+    with pytest.raises(typer.BadParameter, match="File not found: nonexistent2.txt"):
+        validate_files(file1, "nonexistent2.txt")
+
+    # First file is not readable (PermissionError)
+    with patch("builtins.open", side_effect=PermissionError("Permission denied")):
+        with pytest.raises(typer.BadParameter, match="File not readable: unreadable1.txt"):
+            validate_files("unreadable1.txt", file2)
+
+    # Second file is not readable (PermissionError)
+    with patch("builtins.open", side_effect=[mock_open(read_data="").return_value, PermissionError("Permission denied")]):
+        with pytest.raises(typer.BadParameter, match="File not readable: unreadable2.txt"):
+            validate_files(file1, "unreadable2.txt")
+
+    # Both files are valid and readable
+    assert validate_files(file1, file2) is True
+
+    # Generic IOError on first file
+    with patch("builtins.open", side_effect=IOError("Disk full")):
+        with pytest.raises(typer.BadParameter, match="Error accessing file file1.txt: Disk full"):
+            validate_files("file1.txt", file2)
+
+    # Generic IOError on second file
+    with patch("builtins.open", side_effect=[mock_open(read_data="").return_value, IOError("Disk full")]):
+        with pytest.raises(typer.BadParameter, match="Error accessing file file2.txt: Disk full"):
+            validate_files(file1, "file2.txt")
+
 
 def test_start_message():
     with patch('typer.echo') as mock_echo:
